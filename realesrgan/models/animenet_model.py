@@ -9,11 +9,11 @@ from realesrgan.data.degradation import Degradation
 
 
 @MODEL_REGISTRY.register()
-class RealESRGANModel(SRGANModel):
-    """RealESRGAN Model"""
+class AnimeNetModel(SRGANModel):
+    """AnimeNet Model"""
 
     def __init__(self, opt):
-        super(RealESRGANModel, self).__init__(opt)
+        super(AnimeNetModel, self).__init__(opt)
         self.jpeger = DiffJPEG(differentiable=False).cuda()
         self.usm_sharpener = USMSharp().cuda()
         self.queue_size = opt.get('queue_size', 180)
@@ -71,7 +71,7 @@ class RealESRGANModel(SRGANModel):
     def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
         # do not use the synthetic process during validation
         self.is_train = False
-        super(RealESRGANModel, self).nondist_validation(dataloader, current_iter, tb_logger, save_img)
+        super(AnimeNetModel, self).nondist_validation(dataloader, current_iter, tb_logger, save_img)
         self.is_train = True
 
     def optimize_parameters(self, current_iter):
