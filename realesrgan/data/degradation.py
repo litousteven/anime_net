@@ -64,7 +64,7 @@ class Degradation:
 
         # ----------------------- The second degradation process ----------------------- #
 
-        # # blur
+        # blur
         if np.random.uniform() < self.opt['second_blur_prob']:
             out = filter2D(out, self.kernel2)
         # random resize

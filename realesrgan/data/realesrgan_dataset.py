@@ -16,7 +16,7 @@ from torch.utils import data as data
 @DATASET_REGISTRY.register()
 class RealESRGANDataset(data.Dataset):
     """
-    Dataset used for Real-ESRGAN model.
+    Dataset used for AnimeNet model.
     """
 
     def __init__(self, opt):

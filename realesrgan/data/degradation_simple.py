@@ -24,12 +24,16 @@ class DegradationSimple:
         gt = data['gt'].to(self.device)
         gt_usm = self.usm_sharpener(gt)
 
+        self.kernel1 = data['kernel1'].to(self.device)
+        self.kernel2 = data['kernel2'].to(self.device)
         self.sinc_kernel = data['sinc_kernel'].to(self.device)
 
         ori_h, ori_w = gt.size()[2:4]
 
         # ----------------------- The first degradation process ----------------------- #
         out = gt_usm
+        # blur
+        out = filter2D(out, self.kernel1)
 
         # random resize
         updown_type = random.choices(['up', 'down', 'keep'], self.opt['resize_prob'])[0]
@@ -48,7 +52,9 @@ class DegradationSimple:
         out = self.jpeger(out, quality=jpeg_p)
 
         # ----------------------- The second degradation process ----------------------- #
-
+        # blur
+        if np.random.uniform() < self.opt['second_blur_prob']:
+            out = filter2D(out, self.kernel2)
         # random resize
         updown_type = random.choices(['up', 'down', 'keep'], self.opt['resize_prob2'])[0]
         if updown_type == 'up':

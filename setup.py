@@ -84,7 +84,7 @@ if __name__ == '__main__':
     setup(
         name='realesrgan',
         version=get_version(),
-        description='Real-ESRGAN aims at developing Practical Algorithms for General Image Restoration',
+        description='AnimeNet aims at developing Practical Algorithms for General Image Restoration',
         long_description=readme(),
         long_description_content_type='text/markdown',
         author='Xintao Wang',
