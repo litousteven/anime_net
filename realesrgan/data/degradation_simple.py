@@ -16,24 +16,22 @@ class DegradationSimple:
         self.jpeger = DiffJPEG(differentiable=False).cuda()
         self.usm_sharpener = USMSharp().cuda()
 
-        self.sinc_kernel = None
-
     @torch.no_grad()
     def degrade_data(self, data):
         # training data synthesis
         gt = data['gt'].to(self.device)
         gt_usm = self.usm_sharpener(gt)
 
-        self.kernel1 = data['kernel1'].to(self.device)
-        self.kernel2 = data['kernel2'].to(self.device)
-        self.sinc_kernel = data['sinc_kernel'].to(self.device)
+        kernel1 = data['kernel1'].to(self.device)
+        kernel2 = data['kernel2'].to(self.device)
+        sinc_kernel = data['sinc_kernel'].to(self.device)
 
         ori_h, ori_w = gt.size()[2:4]
 
         # ----------------------- The first degradation process ----------------------- #
         out = gt_usm
         # blur
-        out = filter2D(out, self.kernel1)
+        out = filter2D(out, kernel1)
 
         # random resize
         updown_type = random.choices(['up', 'down', 'keep'], self.opt['resize_prob'])[0]
@@ -54,7 +52,7 @@ class DegradationSimple:
         # ----------------------- The second degradation process ----------------------- #
         # blur
         if np.random.uniform() < self.opt['second_blur_prob']:
-            out = filter2D(out, self.kernel2)
+            out = filter2D(out, kernel2)
         # random resize
         updown_type = random.choices(['up', 'down', 'keep'], self.opt['resize_prob2'])[0]
         if updown_type == 'up':
@@ -78,7 +76,7 @@ class DegradationSimple:
             # resize back + the final sinc filter
             mode = random.choice(['area', 'bilinear', 'bicubic'])
             out = F.interpolate(out, size=(ori_h // self.opt['scale'], ori_w // self.opt['scale']), mode=mode)
-            out = filter2D(out, self.sinc_kernel)
+            out = filter2D(out, sinc_kernel)
             # JPEG compression
             jpeg_p = out.new_zeros(out.size(0)).uniform_(*self.opt['jpeg_range2'])
             out = torch.clamp(out, 0, 1)
@@ -91,7 +89,7 @@ class DegradationSimple:
             # resize back + the final sinc filter
             mode = random.choice(['area', 'bilinear', 'bicubic'])
             out = F.interpolate(out, size=(ori_h // self.opt['scale'], ori_w // self.opt['scale']), mode=mode)
-            out = filter2D(out, self.sinc_kernel)
+            out = filter2D(out, sinc_kernel)
 
         # clamp and round
         lq = torch.clamp((out * 255.0).round(), 0, 255) / 255.

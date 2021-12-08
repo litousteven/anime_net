@@ -1,11 +1,11 @@
 from collections import OrderedDict
 
 import torch
-from basicsr.models.srgan_model import SRGANModel
 from basicsr.utils import DiffJPEG, USMSharp
 from basicsr.utils.registry import MODEL_REGISTRY
 
 from realesrgan.data.degradation import Degradation
+from realesrgan.models.srgan_model import SRGANModel
 
 
 @MODEL_REGISTRY.register()
@@ -16,7 +16,7 @@ class AnimeNetModel(SRGANModel):
         super(AnimeNetModel, self).__init__(opt)
         self.jpeger = DiffJPEG(differentiable=False).cuda()
         self.usm_sharpener = USMSharp().cuda()
-        self.queue_size = opt.get('queue_size', 180)
+        self.queue_size = opt.get('queue_size', 360)
         self.degradation = Degradation(opt)
 
     @torch.no_grad()
@@ -86,15 +86,16 @@ class AnimeNetModel(SRGANModel):
             gan_gt = self.gt
 
         # optimize net_g
-        for p in self.net_d.parameters():
-            p.requires_grad = False
+        if self.cri_gan:
+            for p in self.net_d.parameters():
+                p.requires_grad = False
 
         self.optimizer_g.zero_grad()
         self.output = self.net_g(self.lq)
 
         l_g_total = 0
         loss_dict = OrderedDict()
-        if (current_iter % self.net_d_iters == 0 and current_iter > self.net_d_init_iters):
+        if (current_iter % self.net_d_iters == 0 and current_iter > self.net_d_init_iters) or self.cri_gan is None:
             # pixel loss
             if self.cri_pix:
                 l_g_pix = self.cri_pix(self.output, l1_gt)
@@ -110,32 +111,34 @@ class AnimeNetModel(SRGANModel):
                     l_g_total += l_g_style
                     loss_dict['l_g_style'] = l_g_style
             # gan loss
-            fake_g_pred = self.net_d(self.output)
-            l_g_gan = self.cri_gan(fake_g_pred, True, is_disc=False)
-            l_g_total += l_g_gan
-            loss_dict['l_g_gan'] = l_g_gan
+            if self.cri_gan:
+                fake_g_pred = self.net_d(self.output)
+                l_g_gan = self.cri_gan(fake_g_pred, True, is_disc=False)
+                l_g_total += l_g_gan
+                loss_dict['l_g_gan'] = l_g_gan
 
             l_g_total.backward()
             self.optimizer_g.step()
 
-        # optimize net_d
-        for p in self.net_d.parameters():
-            p.requires_grad = True
+        if self.cri_gan:
+            # optimize net_d
+            for p in self.net_d.parameters():
+                p.requires_grad = True
 
-        self.optimizer_d.zero_grad()
-        # real
-        real_d_pred = self.net_d(gan_gt)
-        l_d_real = self.cri_gan(real_d_pred, True, is_disc=True)
-        loss_dict['l_d_real'] = l_d_real
-        loss_dict['out_d_real'] = torch.mean(real_d_pred.detach())
-        l_d_real.backward()
-        # fake
-        fake_d_pred = self.net_d(self.output.detach().clone())  # clone for pt1.9
-        l_d_fake = self.cri_gan(fake_d_pred, False, is_disc=True)
-        loss_dict['l_d_fake'] = l_d_fake
-        loss_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
-        l_d_fake.backward()
-        self.optimizer_d.step()
+            self.optimizer_d.zero_grad()
+            # real
+            real_d_pred = self.net_d(gan_gt)
+            l_d_real = self.cri_gan(real_d_pred, True, is_disc=True)
+            loss_dict['l_d_real'] = l_d_real
+            loss_dict['out_d_real'] = torch.mean(real_d_pred.detach())
+            l_d_real.backward()
+            # fake
+            fake_d_pred = self.net_d(self.output.detach().clone())  # clone for pt1.9
+            l_d_fake = self.cri_gan(fake_d_pred, False, is_disc=True)
+            loss_dict['l_d_fake'] = l_d_fake
+            loss_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
+            l_d_fake.backward()
+            self.optimizer_d.step()
 
         if self.ema_decay > 0:
             self.model_ema(decay=self.ema_decay)

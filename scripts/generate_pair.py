@@ -4,7 +4,7 @@ import os
 import logging
 from basicsr.utils import (get_env_info, get_root_logger, img_util)
 from basicsr.utils.options import copy_opt_file, dict2str, parse_options
-from realesrgan.data.degradation import Degradation
+from realesrgan.data.degradation_simple import DegradationSimple
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
     result = create_train_val_dataloader(opt, logger)
     train_loader, train_sampler, val_loaders, total_epochs, total_iters = result
 
-    degradation = Degradation(opt)
+    degradation = DegradationSimple(opt)
     index = 0
     extension = ".png"
     for item in iter(train_loader):

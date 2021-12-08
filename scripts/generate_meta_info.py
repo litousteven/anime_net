@@ -21,7 +21,7 @@ def main(args):
                     print(f'Img is None: {img_path}')
             if status:
                 img_name = os.path.relpath(img_path, root)
-                print(img_name)
+                # print(img_name)
                 txt_file.write(f'{img_name}\n')
 
 

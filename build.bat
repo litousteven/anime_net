@@ -2,7 +2,7 @@
 python scripts/extract_subimages.py --input \Pixiv\valid --output \Pixiv\valid_crop --crop_size 400 --step 200
 python scripts/generate_meta_info.py --input \Pixiv\valid_crop --root \Pixiv --meta_info \Pixiv\meta_info\valid.txt
 
-
+python scripts/extract_subimages.py --input \Pixiv\0-3 --output \Pixiv\train_crop --crop_size 400 --step 200
 python scripts/generate_meta_info.py --input \Pixiv\train_crop --root \Pixiv --meta_info \Pixiv\meta_info\train.txt
 
 
