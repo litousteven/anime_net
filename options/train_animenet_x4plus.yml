@@ -1,34 +1,34 @@
 # general settings
-name: train_animenetx2plus_400k_B12G4
+name: train_ANIMENETx4plus_400k
 model_type: AnimeNetModel
-scale: 2
+scale: 4
 num_gpu: auto  # auto: can infer from your visible devices automatically. official: 4 GPUs
 manual_seed: 0
 
 # ----------------- options for synthesizing training data in RealESRGANModel ----------------- #
 # USM the ground-truth
-l1_gt_usm: True
-percep_gt_usm: True
+l1_gt_usm: False # True
+percep_gt_usm: False # True
 gan_gt_usm: False
 
 # the first degradation process
 resize_prob: [0.2, 0.7, 0.1]  # up, down, keep
 resize_range: [0.15, 1.5]
-gaussian_noise_prob: 0.5
-noise_range: [1, 30]
-poisson_scale_range: [0.05, 3]
-gray_noise_prob: 0.4
-jpeg_range: [30, 95]
+#gaussian_noise_prob: 0.5
+#noise_range: [1, 30]
+#poisson_scale_range: [0.05, 3]
+#gray_noise_prob: 0.4
+jpeg_range: [30, 75]
 
 # the second degradation process
-second_blur_prob: 0.8
+second_blur_prob: 0.4
 resize_prob2: [0.3, 0.4, 0.3]  # up, down, keep
 resize_range2: [0.3, 1.2]
-gaussian_noise_prob2: 0.5
-noise_range2: [1, 25]
-poisson_scale_range2: [0.05, 2.5]
-gray_noise_prob2: 0.4
-jpeg_range2: [30, 95]
+#gaussian_noise_prob2: 0.5
+#noise_range2: [1, 25]
+#poisson_scale_range2: [0.05, 2.5]
+#gray_noise_prob2: 0.4
+jpeg_range2: [30, 75]
 
 gt_size: 256
 queue_size: 180
@@ -43,17 +43,17 @@ datasets:
     io_backend:
       type: disk
 
-    blur_kernel_size: 21
+    blur_kernel_size: 9
     kernel_list: ['iso', 'aniso']
-    kernel_prob: [0.60, 0.60]
+    kernel_prob: [0.50, 0.50]
     sinc_prob: 0.1
     blur_sigma: [0.2, 3]
     betag_range: [0.5, 4]
     betap_range: [1, 2]
 
-    blur_kernel_size2: 21
+    blur_kernel_size2: 9
     kernel_list2: ['iso', 'aniso']
-    kernel_prob2: [0.60, 0.40]
+    kernel_prob2: [0.50, 0.50]
     sinc_prob2: 0.1
     blur_sigma2: [0.2, 1.5]
     betag_range2: [0.5, 4]
@@ -87,10 +87,10 @@ network_g:
   num_in_ch: 3
   num_out_ch: 3
   num_feat: 64
-  rrdb_num_block: 4
-  octave_num_block: 2
+  rrdb_num_block: 6
+  octave_num_block: 0
   num_grow_ch: 32
-  scale: 2
+  # scale: 2
 
 
 network_d:
@@ -102,10 +102,10 @@ network_d:
 # path
 path:
   # use the pre-trained Real-ESRNet model
-  pretrain_network_g: /python/AnimeNet/experiments/train_animenetx2plus_400k_B12G4_g_net/models/net_g_120000.pth
+  pretrain_network_g: ~ # /python/AnimeNet/experiments/train_ANIMENETx4plus_400k_mid/models/net_g_latest.pth
   param_key_g: params_ema
   strict_load_g: true
-  pretrain_network_d: ~
+  pretrain_network_d: ~ # /python/AnimeNet/experiments/train_ANIMENETx4plus_400k_mid/models/net_d_latest.pth
   param_key_d: params
   strict_load_d: true
   resume_state: ~
@@ -128,7 +128,7 @@ train:
     milestones: [400000]
     gamma: 0.5
 
-  total_iter: 400000
+  total_iter: 100000
   warmup_iter: -1  # no warm up
 
   # losses
@@ -153,12 +153,12 @@ train:
     range_norm: false
     criterion: l1
 #   gan loss
-  gan_opt:
-    type: GANLoss
-    gan_type: vanilla
-    real_label_val: 1.0
-    fake_label_val: 0.0
-    loss_weight: !!float 1e-1
+#  gan_opt:
+#    type: GANLoss
+#    gan_type: vanilla
+#    real_label_val: 1.0
+#    fake_label_val: 0.0
+#    loss_weight: !!float 1e-1
 
   net_d_iters: 1
   net_d_init_iters: 0

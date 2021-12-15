@@ -45,6 +45,8 @@ class MixNet(nn.Module):
         self.conv_body = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
 
         self.octave = make_layer(OctaveDB, octave_num_block, num_feat=num_feat, num_grow_ch=num_grow_ch)
+        self.conv_octave = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
+
         # upsample
         self.conv_up1 = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
         self.conv_up2 = nn.Conv2d(num_feat, num_feat, 3, 1, 1)
@@ -62,11 +64,12 @@ class MixNet(nn.Module):
             feat = x
 
         feat = self.conv_first(feat)
+
         # OctaveDB
-        feat = self.octave(feat)
+        octave_feat = self.conv_octave(self.octave(feat))
+        feat = feat + octave_feat
 
         # RRDB
-
         body_feat = self.conv_body(self.body(feat))
         feat = feat + body_feat
 

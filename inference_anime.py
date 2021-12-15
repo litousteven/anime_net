@@ -39,7 +39,7 @@ def main():
         help='Image extension. Options: auto | jpg | png, auto means using the same extension as inputs')
     args = parser.parse_args()
 
-    model = MixNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_grow_ch=32, rrdb_num_block=3, octave_num_block=3, scale=args.netscale)
+    model = MixNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_grow_ch=32, rrdb_num_block=4, octave_num_block=2, scale=args.netscale)
 
     upsampler = RealESRGANer(
         scale=args.netscale,

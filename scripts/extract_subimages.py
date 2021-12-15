@@ -138,7 +138,7 @@ if __name__ == '__main__':
         type=int,
         default=0,
         help='Threshold size. Patches whose size is lower than thresh_size will be dropped.')
-    parser.add_argument('--n_thread', type=int, default=8, help='Thread number.')
+    parser.add_argument('--n_thread', type=int, default=6, help='Thread number.')
     parser.add_argument('--compression_level', type=int, default=3, help='Compression level')
     args = parser.parse_args()
 

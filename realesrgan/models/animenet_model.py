@@ -5,6 +5,7 @@ from basicsr.utils import DiffJPEG, USMSharp
 from basicsr.utils.registry import MODEL_REGISTRY
 
 from realesrgan.data.degradation import Degradation
+from realesrgan.data.degradation_simple import DegradationSimple
 from realesrgan.models.srgan_model import SRGANModel
 
 
@@ -17,7 +18,7 @@ class AnimeNetModel(SRGANModel):
         self.jpeger = DiffJPEG(differentiable=False).cuda()
         self.usm_sharpener = USMSharp().cuda()
         self.queue_size = opt.get('queue_size', 360)
-        self.degradation = Degradation(opt)
+        self.degradation = DegradationSimple(opt)
 
     @torch.no_grad()
     def _dequeue_and_enqueue(self):

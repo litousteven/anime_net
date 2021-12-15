@@ -41,8 +41,13 @@ class OctaveConv(nn.Module):
         X_h2l = self.h2l(X_h2l)
 
         X_l2h = self.upsample(X_l2h)
+
+        # rest net
         X_h = X_h + 0.1 * X_l2h + 0.1 * X_h2h
         X_l = X_l + 0.1 * X_h2l + 0.1 * X_l2l
+        #
+        # X_h = X_l2h + X_h2h
+        # X_l = X_h2l + X_l2l
 
         return X_h, X_l
 
@@ -134,4 +139,5 @@ class OctaveDB(nn.Module):
         x1 = self.octave_mid(x0)
         x2 = self.octave_last(x1)
         out = x + 0.2*x2
+        # out = x2
         return out
