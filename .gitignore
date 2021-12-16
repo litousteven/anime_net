@@ -1,6 +1,5 @@
 # ignored folders
 datasets/*
-experiments/*
 results/*
 tb_logger/*
 wandb/*
@@ -139,3 +138,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/results_esrgan/
+/results_final/

@@ -65,13 +65,13 @@ class MixNet(nn.Module):
 
         feat = self.conv_first(feat)
 
-        # OctaveDB
-        octave_feat = self.conv_octave(self.octave(feat))
-        feat = feat + octave_feat
-
         # RRDB
         body_feat = self.conv_body(self.body(feat))
         feat = feat + body_feat
+
+        # OctaveDB
+        octave_feat = self.conv_octave(self.octave(feat))
+        feat = feat + octave_feat
 
 
         # upsample
