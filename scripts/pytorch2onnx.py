@@ -14,4 +14,4 @@ x = torch.rand(1, 3, 64, 64)
 
 # Export the model
 with torch.no_grad():
-    torch_out = torch.onnx._export(model, x, 'realesrgan-x4.onnx', opset_version=11, export_params=True)
+    torch_out = torch.onnx._export(model, x, 'anime_net-x4.onnx', opset_version=11, export_params=True)

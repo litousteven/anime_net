@@ -28,7 +28,7 @@ class RealESRGANer():
 
         if model_path.startswith('https://'):
             model_path = load_file_from_url(
-                url=model_path, model_dir='realesrgan/weights', progress=True, file_name=None)
+                url=model_path, model_dir='anime_net/weights', progress=True, file_name=None)
         loadnet = torch.load(model_path)
         if 'params_ema' in loadnet:
             keyname = 'params_ema'
@@ -140,7 +140,7 @@ class RealESRGANer():
         return self.output
 
     @torch.no_grad()
-    def enhance(self, img, outscale=None, alpha_upsampler='realesrgan'):
+    def enhance(self, img, outscale=None, alpha_upsampler='anime_net'):
         h_input, w_input = img.shape[0:2]
         # img: numpy
         img = img.astype(np.float32)
@@ -158,7 +158,7 @@ class RealESRGANer():
             alpha = img[:, :, 3]
             img = img[:, :, 0:3]
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            if alpha_upsampler == 'realesrgan':
+            if alpha_upsampler == 'anime_net':
                 alpha = cv2.cvtColor(alpha, cv2.COLOR_GRAY2RGB)
         else:
             img_mode = 'RGB'
@@ -178,7 +178,7 @@ class RealESRGANer():
 
         # ------------------- process the alpha channel if necessary ------------------- #
         if img_mode == 'RGBA':
-            if alpha_upsampler == 'realesrgan':
+            if alpha_upsampler == 'anime_net':
                 self.pre_process(alpha)
                 if self.tile_size > 0:
                     self.tile_process()

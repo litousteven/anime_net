@@ -6,7 +6,7 @@ import os
 import subprocess
 import time
 
-version_file = 'realesrgan/version.py'
+version_file = 'anime_net/version.py'
 
 
 def readme():
@@ -82,7 +82,7 @@ def get_requirements(filename='requirements.txt'):
 if __name__ == '__main__':
     write_version_py()
     setup(
-        name='realesrgan',
+        name='anime_net',
         version=get_version(),
         description='AnimeNet aims at developing Practical Algorithms for General Image Restoration',
         long_description=readme(),

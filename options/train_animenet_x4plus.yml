@@ -7,8 +7,8 @@ manual_seed: 0
 
 # ----------------- options for synthesizing training data in RealESRGANModel ----------------- #
 # USM the ground-truth
-l1_gt_usm: False # True
-percep_gt_usm: False # True
+l1_gt_usm: True
+percep_gt_usm: True
 gan_gt_usm: False
 
 # the first degradation process
@@ -87,8 +87,8 @@ network_g:
   num_in_ch: 3
   num_out_ch: 3
   num_feat: 64
-  rrdb_num_block: 6
-  octave_num_block: 0
+  rrdb_num_block: 4
+  octave_num_block: 2
   num_grow_ch: 32
   # scale: 2
 
@@ -102,10 +102,10 @@ network_d:
 # path
 path:
   # use the pre-trained Real-ESRNet model
-  pretrain_network_g: ~ # /python/AnimeNet/experiments/train_ANIMENETx4plus_400k_mid/models/net_g_latest.pth
+  pretrain_network_g: /python/AnimeNet/experiments/train_ANIMENETx4plus_400k_new_mid/models/net_g_latest.pth
   param_key_g: params_ema
   strict_load_g: true
-  pretrain_network_d: ~ # /python/AnimeNet/experiments/train_ANIMENETx4plus_400k_mid/models/net_d_latest.pth
+  pretrain_network_d: /python/AnimeNet/experiments/train_ANIMENETx4plus_400k_new_mid/models/net_d_latest.pth
   param_key_d: params
   strict_load_d: true
   resume_state: ~
@@ -152,13 +152,13 @@ train:
     style_weight: 0
     range_norm: false
     criterion: l1
-#   gan loss
-#  gan_opt:
-#    type: GANLoss
-#    gan_type: vanilla
-#    real_label_val: 1.0
-#    fake_label_val: 0.0
-#    loss_weight: !!float 1e-1
+  #  gan loss
+  gan_opt:
+    type: GANLoss
+    gan_type: vanilla
+    real_label_val: 1.0
+    fake_label_val: 0.0
+    loss_weight: !!float 1e-1
 
   net_d_iters: 1
   net_d_init_iters: 0

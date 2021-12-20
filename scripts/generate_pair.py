@@ -4,7 +4,7 @@ import os
 import logging
 from basicsr.utils import (get_env_info, get_root_logger, img_util)
 from basicsr.utils.options import dict2str, parse_options
-from realesrgan.data.degradation_simple import DegradationSimple
+from anime_net.data.degradation_simple import DegradationSimple
 
 
 def main():

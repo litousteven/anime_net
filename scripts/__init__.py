@@ -1,7 +1,7 @@
 # flake8: noqa
-from realesrgan.archs import *
-from realesrgan.data import *
-from realesrgan.models import *
-from realesrgan.utils import *
-from realesrgan.version import __gitsha__, __version__
+from anime_net.archs import *
+from anime_net.data import *
+from anime_net.models import *
+from anime_net.utils import *
+from anime_net.version import __gitsha__, __version__
 

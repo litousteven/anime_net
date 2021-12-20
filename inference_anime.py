@@ -4,8 +4,8 @@ import glob
 import os
 
 
-from realesrgan import RealESRGANer
-from realesrgan.archs.mixnet_arch import MixNet
+from anime_net import RealESRGANer
+from anime_net.archs.mixnet_arch import MixNet
 
 
 def main():
@@ -14,24 +14,23 @@ def main():
     parser.add_argument(
         '--model_path',
         type=str,
-        default='/python/AnimeNet/experiments/train_animenetx2plus_400k_B12G4/models'
-                '/net_g_15000.pth',
+        default='experiments/pretrained/anime_net.pth',
         help='Path to the pre-trained model')
     parser.add_argument('--output', type=str, default='results', help='Output folder')
     parser.add_argument('--netscale', type=int, default=4, help='Upsample scale factor of the network')
     parser.add_argument('--outscale', type=float, default=4, help='The final upsampling scale of the image')
     parser.add_argument('--suffix', type=str, default='out', help='Suffix of the restored image')
-    parser.add_argument('--tile', type=int, default=0, help='Tile size, 0 for no tile during testing')
+    parser.add_argument('--tile', type=int, default=50, help='Tile size, 0 for no tile during testing')
     parser.add_argument('--tile_pad', type=int, default=10, help='Tile padding')
-    parser.add_argument('--pre_pad', type=int, default=0, help='Pre padding size at each border')
+    parser.add_argument('--pre_pad', type=int, default=50, help='Pre padding size at each border')
     parser.add_argument('--face_enhance', action='store_true', help='Use GFPGAN to enhance face')
     parser.add_argument('--half', action='store_true', help='Use half precision during inference')
     parser.add_argument('--block', type=int, default=23, help='num_block in RRDB')
     parser.add_argument(
         '--alpha_upsampler',
         type=str,
-        default='realesrgan',
-        help='The upsampler for the alpha channels. Options: realesrgan | bicubic')
+        default='anime_net',
+        help='The upsampler for the alpha channels. Options: anime_net | bicubic')
     parser.add_argument(
         '--ext',
         type=str,
@@ -40,6 +39,7 @@ def main():
     args = parser.parse_args()
 
     model = MixNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_grow_ch=32, rrdb_num_block=4, octave_num_block=2, scale=args.netscale)
+
 
     upsampler = RealESRGANer(
         scale=args.netscale,

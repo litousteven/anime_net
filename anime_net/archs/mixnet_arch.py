@@ -6,7 +6,7 @@ from torch.nn import functional as F
 
 from basicsr.utils.registry import ARCH_REGISTRY
 
-from realesrgan.archs.octavenet_arch import OctaveDB
+from anime_net.archs.octavenet_arch import OctaveDB
 
 # OctaveDB
 
