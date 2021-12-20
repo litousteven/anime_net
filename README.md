@@ -1,5 +1,15 @@
 # AnimeNet
 **This is a final project for NYU deep learning course**
+The crawler code can be found at https://github.com/litousteven/pixiv_crawler/tree/master
+
+## Code Introduction
+There are mainly 4 parts of our Code and they also includes most of changes we did to the original Real-ESRGAN project:
+1. anime_net/data I implement DegradationSimple, which is new degradation method I used on anime-style images.
+2. anime_net/archs I implement Ovtave Block and the MixNet. MixNet uses both RDDB blocks and Ovtave Blocks to build a mix net.
+3. anime_net/models I implement AnimeNet training code, which can adjust the loss function more flexible with config file. 
+Then I can train my model by 3 stages in easy way.
+4. scripts/generate_pair I write that script to generate validation pairs, 
+which will be used to test the model during the training and the output images are used to show our training process.
 
 ## Environment Prepare
 
@@ -94,5 +104,9 @@ Two folders of images will be generated: "valid_pair_gt" with ground-truth image
 run CMD:
 
 ```
-python realesrgan/train.py -opt options/train_anime_x4plus.yml --auto_resume
+python realesrgan/train.py -opt options/train_animenet_x4plus.yml --auto_resume
 ```
+To train our model stage by stage, we only need to do some adjustment to the config file (train_animenet_x4plus.yml). 
+When we comment the discriminator config, the loss won't be added to the final loss.
+
+
